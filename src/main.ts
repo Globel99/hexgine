@@ -1,24 +1,17 @@
-import * as THREE from "three";
-import init from "./init";
-import RenderLoop from "./render-loop";
+import * as Three from 'three';
+import RenderLoop from './render-loop';
+import { scene, camera } from './base';
+import './gui/camera-gui';
 
-const { scene, camera, renderer } = init(document.body);
+const geometry = new Three.CylinderGeometry(1, 1, 2, 6, 1);
+const material = new Three.MeshNormalMaterial();
 
-const geometry = new THREE.CylinderGeometry(1, 1, 2, 6, 1);
-const material = new THREE.MeshNormalMaterial();
-
-const hex = new THREE.Mesh(geometry, material);
+const hex = new Three.Mesh(geometry, material);
 camera.position.z = 8;
 camera.position.x = 3;
 camera.position.y = 2;
 
 scene.add(hex);
-function animate() {
-  requestAnimationFrame(animate);
 
-  renderer.render(scene, camera);
-}
-animate();
-
-/* const renderLoop = new RenderLoop(scene, camera, renderer);
-renderLoop.start(); */
+const renderLoop = new RenderLoop();
+renderLoop.start();
