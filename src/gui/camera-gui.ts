@@ -8,3 +8,5 @@ cameraFolder.add(camera.position, 'x', -50, 150);
 cameraFolder.add(camera.position, 'y', 0, 100);
 cameraFolder.add(camera.position, 'z', 0, 10);
 cameraFolder.open();
+
+export default gui;
