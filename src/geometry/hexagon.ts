@@ -16,4 +16,12 @@ export class Hexagon extends CylinderGeometry {
   get rowDistance(): number {
     return this.triangleHeight + this.gap / 2;
   }
+
+  get dX(): number {
+    return 2 * this.triangleHeight + this.gap;
+  }
+
+  get dY(): number {
+    return (3 * this.sideLength) / 2 + this.gap * this.triangleHeight;
+  }
 }

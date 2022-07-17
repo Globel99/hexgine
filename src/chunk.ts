@@ -4,9 +4,7 @@ import { Hexagon } from './geometry/hexagon';
 export default class Chunk extends InstancedMesh {
   rows: number;
   columns: number;
-  xD: number;
-  yD: number;
-  rowD: number;
+  hex: Hexagon;
 
   constructor(rows: number, columns: number) {
     const hexa = new Hexagon(0.5);
@@ -22,10 +20,7 @@ export default class Chunk extends InstancedMesh {
 
     this.rows = rows;
     this.columns = columns;
-
-    this.xD = 2 * hexa.triangleHeight + hexa.gap;
-    this.yD = (3 * hexa.sideLength) / 2 + hexa.gap * hexa.triangleHeight;
-    this.rowD = hexa.rowDistance;
+    this.hex = hexa;
 
     this.setMatrices();
   }
@@ -35,9 +30,9 @@ export default class Chunk extends InstancedMesh {
 
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.columns; c++) {
-        const currentRowD = r % 2 ? this.rowD : 0;
-        const x = c * this.xD + currentRowD;
-        const y = r * this.yD;
+        const currentRowD = r % 2 ? this.hex.rowDistance : 0;
+        const x = c * this.hex.dX + currentRowD;
+        const y = r * this.hex.dY;
 
         console.log({ x, y });
 
