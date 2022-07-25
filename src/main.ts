@@ -1,19 +1,21 @@
-import './gui/camera-gui';
 import { OrbitControls } from '@three-ts/orbit-controls';
 import { Color } from 'three';
 
-import RenderLoop from './render-loop';
-import { scene, camera, renderer } from './base';
-import Chunk from './chunk';
+import './gui/camera-gui';
 import gui from './gui/camera-gui';
 
-const chunk = new Chunk(10, 10);
+import RenderLoop from './render-loop';
+import { scene, camera, renderer } from './base';
+import Map from './group/map';
+
+const map = new Map(3, 3, 10);
 
 camera.position.set(60, 50, 0);
-camera.lookAt(scene.position);
-scene.add(chunk);
 
-gui.add(
+scene.add(map);
+camera.lookAt(scene.position);
+
+/* gui.add(
   {
     set: () => {
       chunk.setColorAt(5, new Color('blue'));
@@ -21,7 +23,7 @@ gui.add(
     },
   },
   'set',
-);
+); */
 
 const controls = new OrbitControls(camera, renderer.domElement);
 const renderLoop = new RenderLoop();

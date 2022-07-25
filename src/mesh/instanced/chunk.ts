@@ -1,14 +1,27 @@
-import { InstancedMesh, MeshBasicMaterial, Matrix4, Color } from 'three';
-import { Hexagon } from './geometry/hexagon';
+import {
+  InstancedMesh,
+  MeshBasicMaterial,
+  Matrix4,
+  Color,
+  Vector2,
+} from 'three';
+import { Hexagon } from '../../geometry/hexagon';
 
 export default class Chunk extends InstancedMesh {
   rows: number;
   columns: number;
   hex: Hexagon;
+  offset: Vector2;
 
-  constructor(rows: number, columns: number) {
+  constructor(
+    rows: number,
+    columns: number,
+    offset: Vector2 = new Vector2(0, 0),
+  ) {
     const hexa = new Hexagon(0.5);
-    const material = new MeshBasicMaterial({});
+    const material = new MeshBasicMaterial({
+      color: new Color(Math.random(), Math.random(), Math.random()),
+    });
     const instanceCount = rows * columns;
 
     const MAX_INSTANCE_COUNT = 10000;
@@ -21,6 +34,7 @@ export default class Chunk extends InstancedMesh {
     this.rows = rows;
     this.columns = columns;
     this.hex = hexa;
+    this.offset = offset;
 
     this.setMatrices();
   }
@@ -34,10 +48,8 @@ export default class Chunk extends InstancedMesh {
         const x = c * this.hex.dX + currentRowD;
         const y = r * this.hex.dY;
 
-        console.log({ x, y });
-
         const matrix = new Matrix4();
-        matrix.setPosition(x, i % 5 ? 1 : 1.5, y);
+        matrix.setPosition(x + this.offset.x, 0, y + this.offset.y);
 
         this.setMatrixAt(i, matrix);
 
@@ -46,5 +58,13 @@ export default class Chunk extends InstancedMesh {
         i += 1;
       }
     }
+  }
+
+  get dX(): number {
+    return this.columns * this.hex.dX;
+  }
+
+  get dY(): number {
+    return this.rows * this.hex.dY;
   }
 }
