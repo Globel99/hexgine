@@ -1,26 +1,24 @@
-import {
-  InstancedMesh,
-  MeshBasicMaterial,
-  Matrix4,
-  Color,
-  Vector2,
-} from 'three';
+import { MeshStandardMaterial, Matrix4, Vector2, InstancedMesh, TextureLoader, InstancedBufferAttribute } from 'three';
 import { Hexagon } from '../../geometry/hexagon';
+import hexagonShader from '../../shader/hexagon-shader';
 
 export default class Chunk extends InstancedMesh {
   rows: number;
   columns: number;
   hex: Hexagon;
   offset: Vector2;
+  hexMap: Float32Array;
 
-  constructor(
-    rows: number,
-    columns: number,
-    offset: Vector2 = new Vector2(0, 0),
-  ) {
-    const hexa = new Hexagon(0.5);
-    const material = new MeshBasicMaterial({
-      color: new Color(Math.random(), Math.random(), Math.random()),
+  constructor(rows: number, columns: number, offset: Vector2 = new Vector2(0, 0)) {
+    const hexa = new Hexagon();
+
+    const loader = new TextureLoader();
+    const textureAtlas = loader.load('src/textures/water-grass.jpg');
+
+    const material = new MeshStandardMaterial({
+      map: textureAtlas,
+      // @ts-ignore
+      onBeforeCompile: hexagonShader,
     });
     const instanceCount = rows * columns;
 
@@ -35,7 +33,9 @@ export default class Chunk extends InstancedMesh {
     this.columns = columns;
     this.hex = hexa;
     this.offset = offset;
+    this.hexMap = new Float32Array(this.rows * this.columns).fill(0).map((v, i) => Math.random() > 0.5);
 
+    this.setHexMap();
     this.setMatrices();
   }
 
@@ -52,12 +52,13 @@ export default class Chunk extends InstancedMesh {
         matrix.setPosition(x + this.offset.x, 0, y + this.offset.y);
 
         this.setMatrixAt(i, matrix);
-
-        this.setColorAt(i, new Color(0.6, 0.2, 0.2));
-
         i += 1;
       }
     }
+  }
+
+  private setHexMap() {
+    this.hex.setAttribute('textureId', new InstancedBufferAttribute(this.hexMap, 1));
   }
 
   get dX(): number {
