@@ -1,15 +1,14 @@
-import { OrbitControls } from '@three-ts/orbit-controls';
 import { DirectionalLight } from 'three';
 
 import './gui/camera-gui';
 
 import RenderLoop from './render-loop';
+import ControlLoop from './control';
+
 import { scene, camera, renderer } from './base';
 import Map from './group/map';
 
 const map = new Map(10, 10, 20);
-
-camera.position.set(60, 50, 0);
 
 const light = new DirectionalLight(0xffffff, 1.5);
 light.position.set(50, 20, 50);
@@ -18,7 +17,7 @@ light.castShadow = true;
 
 scene.add(map);
 scene.add(light);
-camera.lookAt(scene.position);
+//camera.lookAt(10, 0, 50);
 
 /* gui.add(
   {
@@ -30,6 +29,8 @@ camera.lookAt(scene.position);
   'set',
 ); */
 
-const controls = new OrbitControls(camera, renderer.domElement);
 const renderLoop = new RenderLoop();
+const controlLoop = new ControlLoop();
+
+controlLoop.start();
 renderLoop.start();

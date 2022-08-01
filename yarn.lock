@@ -26,6 +26,11 @@
   resolved "https://registry.yarnpkg.com/@types/webxr/-/webxr-0.4.0.tgz#ad06c96a324293e0d5175d13dd5ded5931f90ba3"
   integrity sha512-LQvrACV3Pj17GpkwHwXuTd733gfY+D7b9mKdrTmLdO7vo7P/o6209Qqtk63y/FCv/lspdmi0pWz6Qe/ull9kQg==
 
+camera-controls@^1.36.0:
+  version "1.36.0"
+  resolved "https://registry.yarnpkg.com/camera-controls/-/camera-controls-1.36.0.tgz#740e6952b6effff69c979fbde3f3c0919a655fbb"
+  integrity sha512-EFRS/PGyaqwc+mousHbLF9nFJQbcIcYIpzkddxFltiAtYcwyR017t1HUh51c75YqqfTKPGerIlITGRu3a+8j6g==
+
 dat.gui@^0.7.9:
   version "0.7.9"
   resolved "https://registry.yarnpkg.com/dat.gui/-/dat.gui-0.7.9.tgz#860cab06053b028e327820eabdf25a13cf07b17e"
