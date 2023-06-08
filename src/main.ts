@@ -8,9 +8,9 @@ import ControlLoop from './control';
 import { scene, camera, renderer } from './base';
 import Map from './group/map';
 
-const map = new Map(10, 10, 20);
+const map = new Map(2, 2, 5);
 
-const light = new DirectionalLight(0xffffff, 1.5);
+const light = new DirectionalLight(0xffffff, 2.5);
 light.position.set(50, 20, 50);
 light.target.position.set(1000, 0, 1000);
 light.castShadow = true;

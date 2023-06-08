@@ -9,11 +9,11 @@ export default class Chunk extends InstancedMesh {
   offset: Vector2;
   hexMap: Float32Array;
 
-  constructor(rows: number, columns: number, offset: Vector2 = new Vector2(0, 0)) {
+  constructor(rows: number, columns: number, offset: Vector2 = new Vector2(0, 0), hexMap: number[][] = []) {
     const hexa = new Hexagon();
 
     const loader = new TextureLoader();
-    const textureAtlas = loader.load('src/textures/water-grass.jpg');
+    const textureAtlas = loader.load('src/textures/minimal-water-grass.jpg');
 
     const material = new MeshStandardMaterial({
       map: textureAtlas,
@@ -28,12 +28,15 @@ export default class Chunk extends InstancedMesh {
     if (instanceCount > MAX_INSTANCE_COUNT) {
       console.error('instance count exceeds maximum value');
     }
+    if (hexMap.flat().length !== instanceCount) {
+      throw Error(`hexmap has length of ${hexMap.length} instead of ${instanceCount}`);
+    }
 
     this.rows = rows;
     this.columns = columns;
     this.hex = hexa;
     this.offset = offset;
-    this.hexMap = new Float32Array(this.rows * this.columns).fill(0).map((v, i) => Math.random() > 0.5);
+    this.hexMap = new Float32Array(hexMap.flat());
 
     this.setHexMap();
     this.setMatrices();
@@ -58,7 +61,7 @@ export default class Chunk extends InstancedMesh {
   }
 
   private setHexMap() {
-    this.hex.setAttribute('textureId', new InstancedBufferAttribute(this.hexMap, 1));
+    this.hex.setAttribute('textureId', new InstancedBufferAttribute(this.hexMap.reverse(), 1));
   }
 
   get dX(): number {

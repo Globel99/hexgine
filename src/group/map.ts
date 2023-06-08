@@ -17,14 +17,25 @@ export default class Map extends Group {
 
   private setChunks() {
     let i = 0;
-    const testChunk = new Chunk(this.chunkSize, this.chunkSize);
-    const { dX, dY } = testChunk;
+
+    const hexmap = [
+      [1, 1, 1, 1, 0],
+      [0, 1, 0, 1, 0],
+      [1, 0, 1, 1, 1],
+      [1, 1, 0, 0, 1],
+      [0, 1, 0, 1, 0],
+    ];
+
+    const { dX, dY } = new Chunk(this.chunkSize, this.chunkSize, new Vector2(0, 0), hexmap);
 
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.columns; c++) {
-        const offset = new Vector2(c * dX, r * dY);
+        const halfHexa = Math.sqrt(3) / 2;
+        const rowOffset = r % 2 ? halfHexa : 0;
 
-        const chunk = new Chunk(this.chunkSize, this.chunkSize, offset);
+        const offset = new Vector2(c * dX + rowOffset, r * dY);
+
+        const chunk = new Chunk(this.chunkSize, this.chunkSize, offset, hexmap);
         this.add(chunk);
 
         i += 1;
