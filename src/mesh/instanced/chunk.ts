@@ -64,6 +64,19 @@ export default class Chunk extends InstancedMesh {
     this.hex.setAttribute('textureId', new InstancedBufferAttribute(this.hexMap.reverse(), 1));
   }
 
+  select(index: number) {
+    this.hex.setAttribute('isSelected', new InstancedBufferAttribute(this.getSelectionMap(index), 1));
+  }
+
+  deselect() {
+    this.hex.setAttribute('isSelected', new InstancedBufferAttribute(this.getSelectionMap(-1), 1));
+  }
+
+  getSelectionMap(index: number) {
+    const array = new Array(this.rows * this.columns).fill(0).map((_, i) => (i === index ? 1 : 0));
+    return new Float32Array(array);
+  }
+
   get dX(): number {
     return this.columns * this.hex.dX;
   }

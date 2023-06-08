@@ -8,34 +8,48 @@ type Shader = {
   fragmentShader: string;
 };
 
-export default function hexagonShader(shader: Shader) {
-  const textureCount = '2.0';
-  const textureStep = 1 / parseInt(textureCount, 10);
+const TEXTURE_COUNT = '2.0';
+const TEXTURE_STEP = 1 / parseInt(TEXTURE_COUNT, 10);
+const SELECTION_BRIGHTNESS = 1.9;
 
+export default function hexagonShader(shader: Shader) {
   const vertex = {
     prefix: `
             attribute float textureId;
             varying float vTextureId;
+
+            attribute float isSelected;
+            varying float vIsSelected;
             `,
     infixes: [
       {
         find: 'void main() {',
-        insert: 'vTextureId = textureId;',
+        insert: `
+        vTextureId = textureId;
+        vIsSelected = isSelected;
+        `,
       },
     ],
   };
 
   const fragment = {
-    prefix: 'varying float vTextureId;',
+    prefix: `
+      varying float vTextureId;
+      varying float vIsSelected;
+    `,
     infixes: [
       {
         find: '#include <map_fragment>',
         insert: `
-        float textureOffset = ${textureStep} * vTextureId;
-        float x = (vUv.x / ${textureCount}) + textureOffset;
+        float textureOffset = ${TEXTURE_STEP} * vTextureId;
+        float x = (vUv.x / ${TEXTURE_COUNT}) + textureOffset;
         vec4 textureColor = texture(map, vec2(x, vUv.y));
 
-        diffuseColor = textureColor;
+        if (vIsSelected == 1.0) {
+          diffuseColor = textureColor * ${SELECTION_BRIGHTNESS};
+        } else {
+          diffuseColor = textureColor;
+        }
         `,
       },
     ],

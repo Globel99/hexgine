@@ -24,7 +24,6 @@ export default class ControlLoop {
     setInterval(() => {
       const delta = this.clock.getDelta();
       this.control.update(delta);
-      console.log(this.control.camera.position.y);
     });
   }
 }

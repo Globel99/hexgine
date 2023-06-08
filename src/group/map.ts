@@ -5,14 +5,20 @@ export default class Map extends Group {
   rows: number;
   columns: number;
   chunkSize: number;
+  children: Chunk[];
 
   constructor(rows: number, columns: number, chunkSize: number) {
     super();
     this.rows = rows;
     this.columns = columns;
     this.chunkSize = chunkSize;
+    this.children = [];
 
     this.setChunks();
+  }
+
+  get isMap() {
+    return true;
   }
 
   private setChunks() {
