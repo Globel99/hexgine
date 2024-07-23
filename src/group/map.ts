@@ -36,8 +36,8 @@ export default class Map extends Group {
 
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.columns; c++) {
-        const halfHexa = Math.sqrt(3) / 2;
-        const rowOffset = r % 2 ? halfHexa : 0;
+        const halfHexa = 1;
+        const rowOffset = r % 2 ? 0 : 0;
 
         const offset = new Vector2(c * dX + rowOffset, r * dY);
 

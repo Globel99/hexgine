@@ -1,8 +1,3 @@
-type ShaderInfix = {
-  find: string;
-  insert: string;
-};
-
 type Shader = {
   vertexShader: string;
   fragmentShader: string;
@@ -13,33 +8,37 @@ const TEXTURE_STEP = 1 / parseInt(TEXTURE_COUNT, 10);
 const SELECTION_BRIGHTNESS = 1.9;
 
 export default function hexagonShader(shader: Shader) {
-  const vertex = {
-    prefix: `
+  shader.vertexShader = patchShader({
+    shader: shader.vertexShader,
+    addPrefix: `
             attribute float textureId;
             varying float vTextureId;
 
             attribute float isSelected;
             varying float vIsSelected;
             `,
-    infixes: [
+    inserts: [
       {
-        find: 'void main() {',
+        where: 'void main() {',
         insert: `
         vTextureId = textureId;
         vIsSelected = isSelected;
         `,
       },
     ],
-  };
+  });
 
-  const fragment = {
-    prefix: `
+  console.log(shader);
+
+  shader.fragmentShader = patchShader({
+    shader: shader.fragmentShader,
+    addPrefix: `
       varying float vTextureId;
       varying float vIsSelected;
     `,
-    infixes: [
+    inserts: [
       {
-        find: '#include <map_fragment>',
+        where: '#include <map_fragment>',
         insert: `
         float textureOffset = ${TEXTURE_STEP} * vTextureId;
         float x = (vUv.x / ${TEXTURE_COUNT}) + textureOffset;
@@ -53,28 +52,31 @@ export default function hexagonShader(shader: Shader) {
         `,
       },
     ],
-  };
-
-  shader.vertexShader = patchShader(shader.vertexShader, vertex.prefix, vertex.infixes);
-
-  shader.fragmentShader = patchShader(shader.fragmentShader, fragment.prefix, fragment.infixes);
+  });
 }
 
-function patchShader(shader: string, prefix: string, infixes: ShaderInfix[]): string {
-  shader = `
-    ${prefix}
-    ${shader}
-    `;
+type PatchShaderParams = {
+  shader: string;
+  addPrefix?: string;
+  inserts?: {
+    where: string;
+    insert: string;
+  }[];
+};
 
-  infixes.forEach((infix) => {
+function patchShader({ shader, addPrefix = '', inserts = [] }: PatchShaderParams): string {
+  inserts.forEach(({ where, insert }) => {
     shader = shader.replace(
-      infix.find,
+      where,
       `
-    ${infix.find}
-    ${infix.insert}
-    `,
+      ${where}
+      ${insert}
+      `,
     );
   });
 
-  return shader;
+  return `
+    ${addPrefix}
+    ${shader}
+    `;
 }

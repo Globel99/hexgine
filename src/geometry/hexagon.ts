@@ -1,15 +1,19 @@
-import { CylinderGeometry } from 'three';
+import { BufferGeometry, BufferAttribute } from 'three';
+import { getHexagonVertices } from './vertices/hexagon-vertices';
 
-export class Hexagon extends CylinderGeometry {
+export class Hexagon extends BufferGeometry {
   sideLength: number;
   triangleHeight: number;
   gap: number;
 
-  constructor(height = 0.05) {
-    super(1, 1, height, 6, 1);
+  constructor() {
+    super();
 
-    this.sideLength = 1;
-    this.triangleHeight = Math.sqrt(3) / 2;
+    this.setAttribute('position', new BufferAttribute(getHexagonVertices(), 3));
+    this.computeVertexNormals();
+
+    this.sideLength = 0.5;
+    this.triangleHeight = 1.5;
     this.gap = 0.1;
   }
 

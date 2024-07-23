@@ -29,7 +29,7 @@ export default class {
 
       if (id) {
         selectedId = chunk.id;
-        console.log(chunk.select(id));
+        //console.log(chunk.select(id));
       }
     }
 

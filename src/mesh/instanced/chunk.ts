@@ -1,6 +1,17 @@
-import { MeshStandardMaterial, Matrix4, Vector2, InstancedMesh, TextureLoader, InstancedBufferAttribute } from 'three';
-import { Hexagon } from '../../geometry/hexagon';
+import {
+  MeshStandardMaterial,
+  Matrix4,
+  Vector2,
+  InstancedMesh,
+  TextureLoader,
+  InstancedBufferAttribute,
+  MeshBasicMaterial,
+  DoubleSide,
+  MeshLambertMaterial,
+  ObjectLoader,
+} from 'three';
 import hexagonShader from '../../shader/hexagon-shader';
+import { Hexagon } from '../../geometry/hexagon';
 
 export default class Chunk extends InstancedMesh {
   rows: number;
@@ -11,19 +22,34 @@ export default class Chunk extends InstancedMesh {
 
   constructor(rows: number, columns: number, offset: Vector2 = new Vector2(0, 0), hexMap: number[][] = []) {
     const hexa = new Hexagon();
+    const objloader = new ObjectLoader();
 
     const loader = new TextureLoader();
     const textureAtlas = loader.load('src/textures/minimal-water-grass.jpg');
+    const waveAtlas = loader.load('src/textures/wave.jpg');
 
-    const material = new MeshStandardMaterial({
-      map: textureAtlas,
-      // @ts-ignore
-      onBeforeCompile: hexagonShader,
-    });
+    const materials = {
+      lambert: new MeshLambertMaterial({
+        wireframe: true,
+        wireframeLinewidth: 2,
+        //lightMap: waveAtlas,
+      }),
+      basic: new MeshBasicMaterial({
+        color: 0xff0000,
+        wireframe: true,
+        side: DoubleSide,
+        colorWrite: true,
+      }),
+      standard: new MeshStandardMaterial({
+        map: textureAtlas,
+        //wireframe: true,
+      }),
+    };
+
     const instanceCount = rows * columns;
 
     const MAX_INSTANCE_COUNT = 10000;
-    super(hexa, material, Math.min(MAX_INSTANCE_COUNT, instanceCount));
+    super(hexa, materials.standard, Math.min(MAX_INSTANCE_COUNT, instanceCount));
 
     if (instanceCount > MAX_INSTANCE_COUNT) {
       console.error('instance count exceeds maximum value');
@@ -38,6 +64,7 @@ export default class Chunk extends InstancedMesh {
     this.offset = offset;
     this.hexMap = new Float32Array(hexMap.flat());
 
+    //this.setColorAt(2, new Color(0xff0000));
     this.setHexMap();
     this.setMatrices();
   }
