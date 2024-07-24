@@ -1,37 +1,39 @@
-import { Mesh, MeshLambertMaterial, ConeGeometry, Fog, Group } from 'three';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import { Fog, Mesh } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { MountainInstances } from './mesh/instanced/mountain-instances';
+import { HexaPositions } from './hexa-positions';
+import { InstancedTileGroup } from './mesh/instanced/instanced-tile-group';
 
 import './light';
 
 import RenderLoop from './render-loop';
 import ControlLoop from './control';
 
-import { scene, camera, renderer } from './base';
-import Map from './group/map';
+import { scene } from './base';
 
-const map = new Map(1, 2, 5);
 const objloader = new GLTFLoader();
 objloader.load(
-  '/mountain.glb',
+  '/mountain2.glb',
   function (gltf) {
     console.log('original', gltf.scene);
     console.log(gltf.scene.children[0]);
-    const scene1 = gltf.scene.clone();
-    const scene2 = gltf.scene.clone();
-    const scene3 = gltf.scene.clone();
 
-    const mountains = new MountainInstances(scene1, 0);
-    const mountains2 = new MountainInstances(scene2, 1);
-    const mountains3 = new MountainInstances(scene3, 2);
+    const positions: { x: number; z: number }[] = [];
 
-    const group = new Group();
-    group.add(mountains.group);
-    group.add(mountains2.group);
-    group.add(mountains3.group);
-    scene.add(group);
-    scene.fog = new Fog(0xcccccc, 5, 140);
+    for (let x = 0; x < 100; x++) {
+      for (let y = 0; y < 100; y++) {
+        positions.push({ x, z: y });
+      }
+    }
+
+    const pos = new HexaPositions(positions);
+
+    const merged = new InstancedTileGroup(gltf.scene.clone().children[0].children as Mesh[], pos);
+
+    scene.add(merged);
+
+    console.log(scene);
+
+    scene.fog = new Fog(0xcccccc, 5, 180);
   },
 
   // onProgress callback
@@ -44,21 +46,6 @@ objloader.load(
     console.error('An error happened');
   },
 );
-
-const testMesh = new Mesh(new ConeGeometry(1, 4, 5, 6), new MeshLambertMaterial());
-
-//scene.add(map);
-//scene.add(testMesh);
-
-/* gui.add(
-  {
-    set: () => {
-      chunk.setColorAt(5, new Color('blue'));
-      chunk.instanceColor.needsUpdate = true;
-    },
-  },
-  'set',
-); */
 
 const renderLoop = new RenderLoop();
 const controlLoop = new ControlLoop();
