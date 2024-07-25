@@ -5,7 +5,9 @@ export class Renderer {
 
   public static getRenderer(): THREE.WebGLRenderer {
     if (!this.renderer) {
-      this.renderer = new Three.WebGLRenderer();
+      this.renderer = new Three.WebGLRenderer({
+        antialias: true,
+      });
       this.renderer.setSize(window.innerWidth, window.innerHeight);
 
       document.body.appendChild(this.renderer.domElement);
