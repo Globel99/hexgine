@@ -3,7 +3,7 @@ import { scene } from './base';
 
 import { AmbientLight, HemisphereLight, PointLight, DirectionalLight } from 'three';
 
-const pointLight = new PointLight(0xffffff, 15);
+const pointLight = new PointLight(0xdddddd, 3);
 pointLight.castShadow = true;
 pointLight.position.y = 50;
 
@@ -28,17 +28,12 @@ const max = 200;
 folder1.add(pointLight.position, 'x', min, max);
 folder1.add(pointLight.position, 'y', min, max);
 folder1.add(pointLight.position, 'z', min, max);
+//folder1.add(pointLight, 'intesity', 1, max);
 folder1.open();
 
-const l = new DirectionalLight(0xffffff, 1);
+const l = new DirectionalLight(0xffffff, 3);
 l.position.set(5, 100, 5); // Position the light to simulate sunlight
-l.target.position.set(500, 50, 0); // Position the target to light the scene
+l.target.position.set(500, 50, 500); // Position the target to light the scene
 l.castShadow = true; // Enable shadows
-l.shadow.camera.near = 0.1;
-l.shadow.camera.far = 25;
-l.shadow.camera.left = -10;
-l.shadow.camera.right = 10;
-l.shadow.camera.top = 10;
-l.shadow.camera.bottom = -10;
 
-scene.add(l);
+scene.add(lights.pointLight);

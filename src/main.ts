@@ -1,6 +1,6 @@
-import { Fog, Mesh } from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { Fog } from 'three';
 import { HexaPositions } from './hexa-positions';
+import { loadModel } from './utils/load-model';
 import { InstancedTileGroup } from './mesh/instanced/instanced-tile-group';
 
 import './light';
@@ -10,42 +10,46 @@ import ControlLoop from './control';
 
 import { scene } from './base';
 
-const objloader = new GLTFLoader();
-objloader.load(
-  '/mountain2.glb',
-  function (gltf) {
-    console.log('original', gltf.scene);
-    console.log(gltf.scene.children[0]);
+const positions: {
+  mountain: { x: number; z: number }[];
+  sea: { x: number; z: number }[];
+  grass: { x: number; z: number }[];
+} = {
+  mountain: [],
+  sea: [],
+  grass: [],
+};
 
-    const positions: { x: number; z: number }[] = [];
-
-    for (let x = 0; x < 100; x++) {
-      for (let y = 0; y < 100; y++) {
-        positions.push({ x, z: y });
-      }
+for (let x = 0; x < 100; x++) {
+  for (let y = 0; y < 100; y++) {
+    const rand = Math.random();
+    if (rand > 0.3 && rand < 0.7) {
+      positions.grass.push({ x, z: y });
+      continue;
     }
 
-    const pos = new HexaPositions(positions);
+    if (rand > 0.8) {
+      positions.sea.push({ x, z: y });
+      continue;
+    }
 
-    const merged = new InstancedTileGroup(gltf.scene.clone().children[0].children as Mesh[], pos);
+    positions.mountain.push({ x, z: y });
+  }
+}
 
-    scene.add(merged);
+scene.fog = new Fog(0xcccccc, 100, 600);
 
-    console.log(scene);
+const models = await loadModel('mountain2', 'sea', 'grass');
 
-    scene.fog = new Fog(0xcccccc, 5, 180);
-  },
+console.log(models.sea, 'sea');
 
-  // onProgress callback
-  function (xhr) {
-    console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
-  },
+const mountains = new InstancedTileGroup(models.mountain2, new HexaPositions(positions.mountain));
+const seas = new InstancedTileGroup(models.sea, new HexaPositions(positions.sea));
+const grasses = new InstancedTileGroup(models.grass, new HexaPositions(positions.grass));
 
-  // onError callback
-  function (err) {
-    console.error('An error happened');
-  },
-);
+scene.add(mountains);
+scene.add(seas);
+scene.add(grasses);
 
 const renderLoop = new RenderLoop();
 const controlLoop = new ControlLoop();

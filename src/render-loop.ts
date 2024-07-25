@@ -1,7 +1,5 @@
 import { Raycaster, Vector2 } from 'three';
 import { scene, camera, renderer } from './base';
-import Chunk from './mesh/instanced/chunk';
-import Map from './group/map';
 
 export default class {
   private raycaster: Raycaster;
@@ -20,7 +18,7 @@ export default class {
 
   animate() {
     this.raycaster.setFromCamera(this.pointer, camera);
-    const intersects = this.raycaster.intersectObjects<Chunk>(scene.children, true);
+    const intersects = this.raycaster.intersectObjects(scene.children, true);
     let selectedId: number = 0;
 
     if (intersects.length) {
@@ -28,12 +26,13 @@ export default class {
       const chunk = intersects[0].object;
 
       if (id) {
-        selectedId = chunk.id;
-        //console.log(chunk.select(id));
+        if (intersects[0].object.parent && 'select' in intersects[0].object.parent) {
+          intersects[0].object.parent.select(id);
+        }
       }
     }
 
-    //@ts-ignore
+    /* //@ts-ignore
     const children: Map[] = scene.children;
 
     children.forEach((child) => {
@@ -46,7 +45,7 @@ export default class {
           }
         });
       }
-    });
+    }); */
 
     requestAnimationFrame(() => {
       this.animate();

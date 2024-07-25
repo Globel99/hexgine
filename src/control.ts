@@ -15,9 +15,10 @@ export default class ControlLoop {
     this.control.dollySpeed = 0.5;
     this.control.verticalDragToForward = true;
     this.control.mouseButtons.left = CameraControls.ACTION.TRUCK;
-    this.control.zoomTo(10);
+    this.control.moveTo(15, 20, 0);
+    this.control.zoomTo(30);
     this.control.minDistance = 20;
-    this.control.maxDistance = 100;
+    this.control.maxDistance = 200;
   }
 
   start() {
