@@ -1,11 +1,11 @@
-import * as Three from 'three';
+import { Scene as ThreeScene } from 'three';
 
 export class Scene {
-  private static scene: THREE.Scene;
+  private static scene: ThreeScene;
 
-  public static getScene(): THREE.Scene {
+  public static getScene(): ThreeScene {
     if (!this.scene) {
-      this.scene = new Three.Scene();
+      this.scene = new ThreeScene();
     }
 
     return this.scene;

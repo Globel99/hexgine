@@ -18,13 +18,13 @@ export default class ControlLoop {
     this.control.moveTo(15, 20, 0);
     this.control.zoomTo(30);
     this.control.minDistance = 20;
-    this.control.maxDistance = 200;
+    this.control.maxDistance = 300;
   }
 
   start() {
     setInterval(() => {
       const delta = this.clock.getDelta();
-      this.control.update(delta);
+      this.control.update(delta * 2);
     });
   }
 }

@@ -1,5 +1,6 @@
 import { Raycaster, Vector2 } from 'three';
 import { scene, camera, renderer } from './base';
+import { InstancedTileGroup } from './mesh/instanced/instanced-tile-group';
 
 export default class {
   private raycaster: Raycaster;
@@ -12,40 +13,29 @@ export default class {
   }
 
   onPointerMove(event: PointerEvent) {
-    this.pointer.x = (event.clientX / window.innerWidth) * 2 - 1.02;
-    this.pointer.y = -(event.clientY / window.innerHeight) * 2 + 1.03;
+    this.pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+    this.pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
   }
 
   animate() {
     this.raycaster.setFromCamera(this.pointer, camera);
     const intersects = this.raycaster.intersectObjects(scene.children, true);
-    let selectedId: number = 0;
 
     if (intersects.length) {
       const id = intersects[0].instanceId;
-      const chunk = intersects[0].object;
 
       if (id) {
-        if (intersects[0].object.parent && 'select' in intersects[0].object.parent) {
-          intersects[0].object.parent.select(id);
+        const parent = intersects[0].object.parent;
+        if (parent && parent instanceof InstancedTileGroup) {
+          const position = parent.getHexaPositionAt(id);
+
+          if ('map' in window) {
+            console.log('select');
+            window.map.selectTile(position);
+          }
         }
       }
     }
-
-    /* //@ts-ignore
-    const children: Map[] = scene.children;
-
-    children.forEach((child) => {
-      if (child.isMap) {
-        const map = child;
-
-        map.children.forEach((chunk) => {
-          if (chunk.id !== selectedId) {
-            chunk.deselect();
-          }
-        });
-      }
-    }); */
 
     requestAnimationFrame(() => {
       this.animate();

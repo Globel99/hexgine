@@ -1,6 +1,6 @@
 import { Matrix4 } from 'three';
 
-type Position = {
+export type MapPosition = {
   x: number;
   z: number;
 };
@@ -12,13 +12,13 @@ const Z_DISTANCE = 3 / 2 + GAP;
 const ROW_OFFSET = Math.sqrt(3) / 2 + GAP / 2;
 
 export class HexaPositions {
-  positions: Position[];
+  positions: MapPosition[];
 
-  constructor(positions: Position[]) {
+  constructor(positions: MapPosition[]) {
     this.positions = positions;
   }
 
-  private calculateOffset(position: Position): {
+  calculateOffset(position: MapPosition): {
     x: number;
     z: number;
   } {

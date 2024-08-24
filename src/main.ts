@@ -2,6 +2,7 @@ import { Fog } from 'three';
 import { HexaPositions } from './hexa-positions';
 import { loadModel } from './utils/load-model';
 import { InstancedTileGroup } from './mesh/instanced/instanced-tile-group';
+import { Map } from './map';
 
 import './light';
 
@@ -10,49 +11,36 @@ import ControlLoop from './control';
 
 import { scene } from './base';
 
-const positions: {
-  mountain: { x: number; z: number }[];
-  sea: { x: number; z: number }[];
-  grass: { x: number; z: number }[];
-} = {
-  mountain: [],
-  sea: [],
-  grass: [],
-};
+scene.fog = new Fog(0xcccccc, 0, 1000);
 
-for (let x = 0; x < 100; x++) {
-  for (let y = 0; y < 100; y++) {
-    const rand = Math.random();
-    if (rand > 0.3 && rand < 0.7) {
-      positions.grass.push({ x, z: y });
-      continue;
-    }
+(async () => {
+  const models = await loadModel('mountain2', 'sea', 'grass', 'select');
 
-    if (rand > 0.8) {
-      positions.sea.push({ x, z: y });
-      continue;
-    }
+  const select = new InstancedTileGroup(models.select, new HexaPositions([{ x: 0, z: 0 }]));
 
-    positions.mountain.push({ x, z: y });
-  }
-}
+  const map = new Map();
+  window.map = map;
+  map.seed();
+  map.setSelectBox(select);
 
-scene.fog = new Fog(0xcccccc, 100, 600);
+  console.log({
+    mountain: map.getTilesPositionByType('mountain'),
+    sea: map.getTilesPositionByType('sea'),
+    grass: map.getTilesPositionByType('grass'),
+  });
 
-const models = await loadModel('mountain2', 'sea', 'grass');
+  const mountains = new InstancedTileGroup(models.mountain2, new HexaPositions(map.getTilesPositionByType('mountain')));
+  const seas = new InstancedTileGroup(models.sea, new HexaPositions(map.getTilesPositionByType('sea')));
+  const grasses = new InstancedTileGroup(models.grass, new HexaPositions(map.getTilesPositionByType('grass')));
 
-console.log(models.sea, 'sea');
+  scene.add(select);
+  scene.add(mountains);
+  scene.add(seas);
+  scene.add(grasses);
 
-const mountains = new InstancedTileGroup(models.mountain2, new HexaPositions(positions.mountain));
-const seas = new InstancedTileGroup(models.sea, new HexaPositions(positions.sea));
-const grasses = new InstancedTileGroup(models.grass, new HexaPositions(positions.grass));
+  const renderLoop = new RenderLoop();
+  const controlLoop = new ControlLoop();
 
-scene.add(mountains);
-scene.add(seas);
-scene.add(grasses);
-
-const renderLoop = new RenderLoop();
-const controlLoop = new ControlLoop();
-
-controlLoop.start();
-renderLoop.start();
+  controlLoop.start();
+  renderLoop.start();
+})();

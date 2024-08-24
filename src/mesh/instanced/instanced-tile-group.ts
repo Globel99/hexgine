@@ -1,16 +1,20 @@
 import { Group, MeshStandardMaterial, Mesh, Color } from 'three';
 import { InstancedTileMesh } from './instanced-tile-mesh';
-import { HexaPositions } from '../../hexa-positions';
+import { HexaPositions, MapPosition } from '../../hexa-positions';
 
 export class InstancedTileGroup extends Group {
+  hexaPositions: HexaPositions;
+  meshes: InstancedTileMesh[];
+
   constructor(meshes: Mesh[], hexPositions: HexaPositions) {
     super();
 
-    this.add(
-      ...meshes.map(
-        (mesh) => new InstancedTileMesh(mesh.geometry, mesh.material as MeshStandardMaterial, hexPositions),
-      ),
+    this.meshes = meshes.map(
+      (mesh) => new InstancedTileMesh(mesh.geometry, mesh.material as MeshStandardMaterial, hexPositions),
     );
+
+    this.hexaPositions = hexPositions;
+    this.add(...this.meshes);
   }
 
   select(id: number) {
@@ -21,5 +25,9 @@ export class InstancedTileGroup extends Group {
       child.setColorAt(id, new Color(0xff0000));
       //child.instanceColor.needsUpdate = true;
     });
+  }
+
+  getHexaPositionAt(index: number): MapPosition {
+    return this.hexaPositions.positions[index];
   }
 }

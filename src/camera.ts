@@ -1,11 +1,11 @@
-import * as Three from 'three';
+import { PerspectiveCamera } from 'three';
 
 export class Camera {
-  private static camera: THREE.PerspectiveCamera;
+  private static camera: PerspectiveCamera;
 
-  public static getCamera(): THREE.PerspectiveCamera {
+  public static getCamera(): PerspectiveCamera {
     if (!this.camera) {
-      this.camera = new Three.PerspectiveCamera(120, window.innerWidth / window.innerHeight, 0.1, 1000);
+      this.camera = new PerspectiveCamera(160, window.innerWidth / window.innerHeight, 1, 1000);
       this.camera.position.set(0, 50, -50);
     }
 

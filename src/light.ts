@@ -3,7 +3,7 @@ import { scene } from './base';
 
 import { AmbientLight, HemisphereLight, PointLight, DirectionalLight } from 'three';
 
-const pointLight = new PointLight(0xdddddd, 3);
+const pointLight = new PointLight(0xffffff, 1);
 pointLight.castShadow = true;
 pointLight.position.y = 50;
 
